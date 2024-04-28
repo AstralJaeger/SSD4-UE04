@@ -22,7 +22,6 @@ public class SAXSummaryHandler extends DefaultHandler {
     private final AbstractSAXSummaryDataHandler<String> saxSummaryDataHandler;
 
     private final Stack<String> measurementTracker;
-    private int measurementTrackerCounter;
 
     public SAXSummaryHandler() {
         super();
@@ -30,7 +29,6 @@ public class SAXSummaryHandler extends DefaultHandler {
         this.stateStack = new Stack<>();
         this.saxSummaryDataHandler = SingletonSAXSummaryDataHandlerFactory.getInstance().getSAXSummaryDataHandler();
         this.measurementTracker = new Stack<>();
-        this.measurementTrackerCounter = 0;
     }
 
     public void setWriter(PrintWriter writer) {
@@ -48,7 +46,7 @@ public class SAXSummaryHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException{
         var padding = "  ".repeat(stateStack.size());
         switch (qName.toLowerCase()) {
             case "fitnessdokument" -> {
@@ -61,9 +59,9 @@ public class SAXSummaryHandler extends DefaultHandler {
 
             }
             case "titel" -> {
-                if (attributes.getValue("position").toLowerCase().equals("vor"))
+                if (attributes.getValue("position").equalsIgnoreCase("vor"))
                     stateStack.push(SAXSummaryHandlerState.TITLE_PREFIX);
-                else if (attributes.getValue("position").toLowerCase().equals("nach"))
+                else if (attributes.getValue("position").equalsIgnoreCase("nach"))
                     stateStack.push(SAXSummaryHandlerState.TITLE_SUFFIX);
             }
             case "vorname" -> {
@@ -81,7 +79,7 @@ public class SAXSummaryHandler extends DefaultHandler {
                 stateStack.push(SAXSummaryHandlerState.MEASUREMENT);
             }
             case "messwert" -> {
-                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.MEASUREMENT_VALUE}");
+                handleStartOfMeasurementValue(attributes);
                 stateStack.push(SAXSummaryHandlerState.MEASUREMENT_VALUE);
             }
             case "notiz" -> {
@@ -96,6 +94,10 @@ public class SAXSummaryHandler extends DefaultHandler {
         }
     }
 
+    private void handleStartOfFitnessDocument() {
+        writer.println("Information zum Fitnessdokument");
+    }
+
     private void handleStartOfPerson(Attributes attrs) {
         this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.GENDER, attrs.getValue("geschlecht"));
     }
@@ -104,22 +106,21 @@ public class SAXSummaryHandler extends DefaultHandler {
         if (!measurementTracker.empty()) {
             throw new IllegalStateException("measurementTracker should be empty at beginning of 'Vitaldaten' but has size " + measurementTracker.size());
         }
-        if (measurementTrackerCounter != 0) {
-            throw new IllegalStateException("measurementTrackerCounter should be 0 at beginning of 'Vitaldaten' but got " + measurementTrackerCounter);
-        }
+        writer.println("Folgende Messungen wurden maschinell durchgeführt:");
     }
 
     private void handleStartOfMeasurement(Attributes attrs) {
         if (!measurementTracker.empty()) {
             throw new IllegalStateException("measurementTracker should be empty at beginning of 'Messung' but has size " + measurementTracker.size());
         }
-        if (measurementTrackerCounter != 0) {
-            throw new IllegalStateException("measurementTrackerCounter should be 0  at beginning of 'Messung' but got " + measurementTrackerCounter);
-        }
     }
 
     private void handleStartOfMeasurementValue(Attributes attrs) {
+        var type = attrs.getValue("typ");
+        var value = attrs.getValue("wert");
+        var unit = attrs.getValue("einheit");
 
+        measurementTracker.push(STR."- \{type}: \{value} \{unit}");
     }
 
     @Override
@@ -127,33 +128,12 @@ public class SAXSummaryHandler extends DefaultHandler {
         if (stateStack.empty())
             return;
 
-        var padding = "  ".repeat(stateStack.size());
         var state = stateStack.pop();
         switch (state) {
-            case FITNESS_DOCUMENT -> {
-                writer.println("");
-            }
-            case PERSON -> {
-                handleEndOfPerson();
-                stateStack.push(SAXSummaryHandlerState.PERSON);
-            }
-            case TITLE_PREFIX -> {
-
-            }
-            case TITLE_SUFFIX -> {
-
-            }
-            case NAME -> {
-
-            }
-            case SURNAME -> {
-
-            }
+            case PERSON -> handleEndOfPerson();
+            case MEASUREMENT -> handleEndOfMeasurement();
+            case NOTE -> handleEndOfNote();
         }
-    }
-
-    private void handleStartOfFitnessDocument() {
-        writer.println("Information zum Fitnessdokument");
     }
 
     private void handleEndOfPerson() {
@@ -170,6 +150,15 @@ public class SAXSummaryHandler extends DefaultHandler {
         writer.println(greetingProvider.provideGreeting());
     }
 
+    private void handleEndOfMeasurement() {
+        measurementTracker.forEach(mv -> writer.println(mv));
+        measurementTracker.clear();
+    }
+
+    private void handleEndOfNote() {
+
+    }
+
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         var value = new String(ch, start, length);
@@ -178,6 +167,10 @@ public class SAXSummaryHandler extends DefaultHandler {
             case TITLE_SUFFIX -> handleTitleCharacters(value, SAXSummaryDataHandlerDataEnum.SUFFIX);
             case NAME -> this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.NAME, value);
             case SURNAME -> this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.SURNAME, value);
+            case NOTE -> {
+                if (!value.equalsIgnoreCase("maschinell"))
+                    measurementTracker.clear();
+            }
         }
     }
 
