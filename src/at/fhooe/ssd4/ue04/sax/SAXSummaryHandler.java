@@ -39,8 +39,7 @@ public class SAXSummaryHandler extends DefaultHandler {
     public void endDocument() throws SAXException {
         writer.flush();
         writer.close();
-
-        }
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -57,8 +56,11 @@ public class SAXSummaryHandler extends DefaultHandler {
 
             }
             case "titel" -> {
-                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.TITLE}");
-                stateStack.push(SAXSummaryHandlerState.TITLE);
+                if (attributes.getValue("position").toLowerCase().equals("vor"))
+                    stateStack.push(SAXSummaryHandlerState.TITLE_PREFIX);
+                else if (attributes.getValue("position").toLowerCase().equals("nach"))
+                    stateStack.push(SAXSummaryHandlerState.TITLE_SUFFIX);
+                writer.println(STR."\{padding}+\{stateStack.peek()}");
             }
             case "vorname" -> {
                 writer.println(STR."\{padding}+\{SAXSummaryHandlerState.NAME}");
@@ -94,19 +96,32 @@ public class SAXSummaryHandler extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
-
         if (stateStack.empty())
             return;
 
         var padding = "  ".repeat(stateStack.size());
         var state = stateStack.pop();
         switch (state) {
+            case FITNESS_DOCUMENT -> {
+                writer.println("");
+            }
             case PERSON -> {
                 handleEndOfPerson();
                 stateStack.push(SAXSummaryHandlerState.PERSON);
             }
-        }
+            case TITLE_PREFIX -> {
 
+            }
+            case TITLE_SUFFIX -> {
+
+            }
+            case NAME -> {
+
+            }
+            case SURNAME -> {
+
+            }
+        }
 
         if (state != SAXSummaryHandlerState.IGNORED_STATE) {
             writer.println(STR."\{padding}-\{state}");
@@ -135,7 +150,21 @@ public class SAXSummaryHandler extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-//        writer.println(new String(ch, start, length));
+        var value = new String(ch, start, length);
+        switch (stateStack.peek()) {
+            case TITLE_PREFIX -> {
+                this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.PREFIX, STR."\{this.saxSummaryDataHandler.getValue(SAXSummaryDataHandlerDataEnum.PREFIX)} \{value}");
+            }
+            case TITLE_SUFFIX -> {
+                this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.SUFFIX, STR."\{this.saxSummaryDataHandler.getValue(SAXSummaryDataHandlerDataEnum.SUFFIX)} \{value}");
+            }
+            case NAME -> {
+                this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.NAME, value);
+            }
+            case SURNAME -> {
+                this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.SURNAME, value);
+            }
+        }
     }
 
     @Override
