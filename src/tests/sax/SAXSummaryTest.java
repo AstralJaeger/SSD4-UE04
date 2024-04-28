@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-public class SAXWriterTest {
+public class SAXSummaryTest {
 
   public static void main(String[] args) {
-    System.out.println(SAXWriterTest.class.getSimpleName() + " BEGIN");
+    System.out.println(SAXSummaryTest.class.getSimpleName() + " BEGIN");
 
     SAXParserFactory factory = SAXParserFactory.newInstance();
     factory.setValidating(true);
@@ -29,6 +29,6 @@ public class SAXWriterTest {
       e.printStackTrace();
     }
 
-    System.out.println(SAXWriterTest.class.getSimpleName() + " END");
+    System.out.println(SAXSummaryTest.class.getSimpleName() + " END");
   }
 }

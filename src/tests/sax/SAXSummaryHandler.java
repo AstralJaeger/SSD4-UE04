@@ -2,7 +2,6 @@ package tests.sax;
 
 import java.io.PrintWriter;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
