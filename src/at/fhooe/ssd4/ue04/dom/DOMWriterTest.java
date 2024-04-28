@@ -1,80 +1,67 @@
 package at.fhooe.ssd4.ue04.dom;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 // Generates a "Course Catalog" XML file with one course 
 
 public class DOMWriterTest {
 
-  public static void main(String[] args) {
-    System.out.println("DOMWriterTest BEGIN");
-    // TODO create factory
+    public static void main(String[] args) {
+        System.out.println("DOMWriterTest BEGIN");
+        // TODO create factory
 
-    try {
-      // TODO create document builder and new document
-
-
-      // TODO Create new courseCatalog element with some attributes
+        try {
+            // TODO create document builder and new document
 
 
-
-      // TODO Append element to document
-
-
-      // TODO create comment with date and time and add it to the document
+            // TODO Create new courseCatalog element with some attributes
 
 
-      // TODO create degree programme element
+            // TODO Append element to document
 
 
-      // TODO add the new element to the courseCatalog
+            // TODO create comment with date and time and add it to the document
 
 
-      // TODO Create new Course element and append to degree programme
-      // <Course id = 'cID8314' semesterHours='1' semester='4'>SSD4</Course>
+            // TODO create degree programme element
 
 
-      // TODO create new Title element, append text to it - append this element to a course
+            // TODO add the new element to the courseCatalog
 
 
-      // TODO Description element (mixed content)
+            // TODO Create new Course element and append to degree programme
+            // <Course id = 'cID8314' semesterHours='1' semester='4'>SSD4</Course>
 
 
-
-      // TODO create credit element (e.g. 1 ECTS)
-
-
-      // TODO course type element
+            // TODO create new Title element, append text to it - append this element to a course
 
 
-      //Serialize the DOM to the given file (the output xml file might not be valid according to given DTD)
-      String fileName = "CourseCatalog_DOMWriter_1_" + new Date().toString().replaceAll("[ :]", "_") + ".xml";
-      File file = new File("xmlfiles/" + fileName);
-      // TODO Use TransformerFactory and Transformer (with OutputProperty)
-
-      // TODO transform the source to the file
+            // TODO Description element (mixed content)
 
 
-      System.out.println("New file was created in " + file.getAbsolutePath());
+            // TODO create credit element (e.g. 1 ECTS)
 
-    } catch (Throwable e) {
-      System.out.println("Exception Type: " + e.getClass().toString());
-      System.out.println("Exception Message: " + e.getMessage());
-      e.printStackTrace();
+
+            // TODO course type element
+
+
+            //Serialize the DOM to the given file (the output xml file might not be valid according to given DTD)
+            String fileName = "CourseCatalog_DOMWriter_1_" + new Date().toString().replaceAll("[ :]", "_") + ".xml";
+            File file = new File("xmlfiles/" + fileName);
+            // TODO Use TransformerFactory and Transformer (with OutputProperty)
+
+            // TODO transform the source to the file
+
+
+            System.out.println("New file was created in " + file.getAbsolutePath());
+
+        } catch (Throwable e) {
+            System.out.println("Exception Type: " + e.getClass().toString());
+            System.out.println("Exception Message: " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("DOMWriterTest END");
+
     }
-    System.out.println("DOMWriterTest END");
-
-  }
 }

@@ -6,7 +6,8 @@ public class SingletonSAXSummaryDataHandlerFactory implements AbstractSAXSummary
 
     protected AbstractSAXSummaryDataHandler<String> handlerInstance = null;
 
-    private SingletonSAXSummaryDataHandlerFactory() {}
+    private SingletonSAXSummaryDataHandlerFactory() {
+    }
 
     public static SingletonSAXSummaryDataHandlerFactory getInstance() {
         if (instance == null) {

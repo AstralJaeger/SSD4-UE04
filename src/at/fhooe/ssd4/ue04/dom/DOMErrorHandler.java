@@ -1,4 +1,5 @@
 package at.fhooe.ssd4.ue04.dom;
+
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;

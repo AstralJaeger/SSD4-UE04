@@ -1,6 +1,7 @@
 package at.fhooe.ssd4.ue04.dom;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;

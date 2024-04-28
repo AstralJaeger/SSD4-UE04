@@ -1,10 +1,10 @@
 <!ELEMENT summary (fullname, measures?)>
-<!ELEMENT fullname (#PCDATA)>
-<!ELEMENT measures (measure+)>
-<!ELEMENT measure (#PCDATA)>
-<!ATTLIST measure
-	      typ CDATA #REQUIRED
-	      wert  CDATA #IMPLIED
-	      einheit  CDATA #IMPLIED
-		  zeitpunkt CDATA #REQUIRED
-	      flag  CDATA #IMPLIED>
+        <!ELEMENT fullname (#PCDATA)>
+        <!ELEMENT measures (measure+)>
+        <!ELEMENT measure (#PCDATA)>
+        <!ATTLIST measure
+                typ CDATA #REQUIRED
+                wert  CDATA #IMPLIED
+                einheit  CDATA #IMPLIED
+                zeitpunkt CDATA #REQUIRED
+                flag  CDATA #IMPLIED>

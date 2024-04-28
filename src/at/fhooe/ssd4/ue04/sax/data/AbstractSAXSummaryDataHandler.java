@@ -22,4 +22,8 @@ public abstract class AbstractSAXSummaryDataHandler<T> implements AbstractSAXSum
         }
         return dataStore.get(key);
     }
+
+    public boolean hasValue(SAXSummaryDataHandlerDataEnum key) {
+        return dataStore.containsKey(key);
+    }
 }

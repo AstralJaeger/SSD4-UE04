@@ -4,15 +4,12 @@ public class GreetingProviderFactoryImpl implements AbstractGreetingProviderFact
 
     @Override
     public AbstractGreetingProvider getGreetingProviderFactory(String gender, String name, String prefix, String suffix) throws IllegalArgumentException {
-
-        switch (gender.toLowerCase()) {
-            case "male":
-                return new MaleGreetingProvider(name, prefix, suffix);
-            case "female":
-                return new FemaleGreetingProvider(name, prefix, suffix);
-            default:
-                throw new IllegalArgumentException("Unsupported gender");
-        }
+        return switch (gender.toLowerCase()) {
+            case "männlich" -> new MaleGreetingProvider(name, prefix, suffix);
+            case "weiblich" -> new FemaleGreetingProvider(name, prefix, suffix);
+            case "divers" -> new DiverseGreetingProvider(name, prefix, suffix);
+            default -> new UnspecifiedGreetingProvider(name, prefix, suffix);
+        };
     }
 }
 
