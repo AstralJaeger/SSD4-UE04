@@ -17,7 +17,6 @@ import at.fhooe.ssd4.ue04.sax.greeting.SingletonGreetingProviderFactoryImpl;
 public class SAXSummaryHandler extends DefaultHandler {
 
     private PrintWriter writer = null;
-    private final StringBuilder builder;
     private final Stack<SAXSummaryHandlerState> stateStack;
     private final AbstractSAXSummaryDataHandler<String> saxSummaryDataHandler;
 
@@ -25,7 +24,6 @@ public class SAXSummaryHandler extends DefaultHandler {
 
     public SAXSummaryHandler() {
         super();
-        this.builder = new StringBuilder();
         this.stateStack = new Stack<>();
         this.saxSummaryDataHandler = SingletonSAXSummaryDataHandlerFactory.getInstance().getSAXSummaryDataHandler();
         this.measurementTracker = new Stack<>();
@@ -36,10 +34,6 @@ public class SAXSummaryHandler extends DefaultHandler {
     }
 
     @Override
-    public void startDocument() throws SAXException {
-    }
-
-    @Override
     public void endDocument() throws SAXException {
         writer.flush();
         writer.close();
@@ -47,7 +41,6 @@ public class SAXSummaryHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException{
-        var padding = "  ".repeat(stateStack.size());
         switch (qName.toLowerCase()) {
             case "fitnessdokument" -> {
                 handleStartOfFitnessDocument();
@@ -83,13 +76,9 @@ public class SAXSummaryHandler extends DefaultHandler {
                 stateStack.push(SAXSummaryHandlerState.MEASUREMENT_VALUE);
             }
             case "notiz" -> {
-                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.NOTE}");
                 stateStack.push(SAXSummaryHandlerState.NOTE);
             }
-            default -> {
-                writer.println(STR."\{padding}+default");
-                stateStack.push(SAXSummaryHandlerState.IGNORED_STATE);
-            }
+            default -> stateStack.push(SAXSummaryHandlerState.IGNORED_STATE);
 
         }
     }
