@@ -11,6 +11,7 @@ public enum SAXSummaryHandlerState {
     VITALDATA("vitaldaten"),
     MEASUREMENT("messung"),
     MEASUREMENT_VALUE("messwert"),
+    NOTE("notiz"),
     IGNORED_STATE("other");
 
     private final String value;

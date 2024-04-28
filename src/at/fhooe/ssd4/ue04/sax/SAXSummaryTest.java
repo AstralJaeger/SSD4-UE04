@@ -4,17 +4,25 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 public class SAXSummaryTest {
 
     public static void main(String[] args) {
-        System.out.println(SAXSummaryTest.class.getSimpleName() + " BEGIN");
+        String[] files = {"ue4_fitnessdokument.xml", "ue4_fitnessdokument_spezial.xml"};
+        for (String file : files) {
+            processFile(file);
+        }
+    }
+
+    public static void processFile(String filename) {
+        System.out.println(SAXSummaryTest.class.getSimpleName() + " BEGIN " + filename);
 
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(true);
         SAXParser saxParser;
         String xmlFilesDir = "xmlfiles/";
-        String inFile = xmlFilesDir + "ue4_fitnessdokument.xml";
+        String inFile = xmlFilesDir + filename;
 
         try {
             saxParser = factory.newSAXParser();
@@ -28,6 +36,6 @@ public class SAXSummaryTest {
             e.printStackTrace();
         }
 
-        System.out.println(SAXSummaryTest.class.getSimpleName() + " END");
+        System.out.println(SAXSummaryTest.class.getSimpleName() + " END " + filename);
     }
 }

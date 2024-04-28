@@ -5,6 +5,7 @@ import java.util.Stack;
 
 import at.fhooe.ssd4.ue04.sax.data.AbstractSAXSummaryDataHandler;
 import at.fhooe.ssd4.ue04.sax.data.SingletonSAXSummaryDataHandlerFactory;
+import org.w3c.dom.Attr;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -20,11 +21,16 @@ public class SAXSummaryHandler extends DefaultHandler {
     private final Stack<SAXSummaryHandlerState> stateStack;
     private final AbstractSAXSummaryDataHandler<String> saxSummaryDataHandler;
 
+    private final Stack<String> measurementTracker;
+    private int measurementTrackerCounter;
+
     public SAXSummaryHandler() {
         super();
         this.builder = new StringBuilder();
         this.stateStack = new Stack<>();
         this.saxSummaryDataHandler = SingletonSAXSummaryDataHandlerFactory.getInstance().getSAXSummaryDataHandler();
+        this.measurementTracker = new Stack<>();
+        this.measurementTrackerCounter = 0;
     }
 
     public void setWriter(PrintWriter writer) {
@@ -67,16 +73,20 @@ public class SAXSummaryHandler extends DefaultHandler {
                 stateStack.push(SAXSummaryHandlerState.SURNAME);
             }
             case "vitaldaten" -> {
-                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.VITALDATA}");
+                handleStartOfVitaldata(attributes);
                 stateStack.push(SAXSummaryHandlerState.VITALDATA);
             }
             case "messung" -> {
-                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.MEASUREMENT}");
+                handleStartOfMeasurement(attributes);
                 stateStack.push(SAXSummaryHandlerState.MEASUREMENT);
             }
             case "messwert" -> {
                 writer.println(STR."\{padding}+\{SAXSummaryHandlerState.MEASUREMENT_VALUE}");
                 stateStack.push(SAXSummaryHandlerState.MEASUREMENT_VALUE);
+            }
+            case "notiz" -> {
+                writer.println(STR."\{padding}+\{SAXSummaryHandlerState.NOTE}");
+                stateStack.push(SAXSummaryHandlerState.NOTE);
             }
             default -> {
                 writer.println(STR."\{padding}+default");
@@ -88,6 +98,28 @@ public class SAXSummaryHandler extends DefaultHandler {
 
     private void handleStartOfPerson(Attributes attrs) {
         this.saxSummaryDataHandler.putValue(SAXSummaryDataHandlerDataEnum.GENDER, attrs.getValue("geschlecht"));
+    }
+
+    private void handleStartOfVitaldata(Attributes attrs) {
+        if (!measurementTracker.empty()) {
+            throw new IllegalStateException("measurementTracker should be empty at beginning of 'Vitaldaten' but has size " + measurementTracker.size());
+        }
+        if (measurementTrackerCounter != 0) {
+            throw new IllegalStateException("measurementTrackerCounter should be 0 at beginning of 'Vitaldaten' but got " + measurementTrackerCounter);
+        }
+    }
+
+    private void handleStartOfMeasurement(Attributes attrs) {
+        if (!measurementTracker.empty()) {
+            throw new IllegalStateException("measurementTracker should be empty at beginning of 'Messung' but has size " + measurementTracker.size());
+        }
+        if (measurementTrackerCounter != 0) {
+            throw new IllegalStateException("measurementTrackerCounter should be 0  at beginning of 'Messung' but got " + measurementTrackerCounter);
+        }
+    }
+
+    private void handleStartOfMeasurementValue(Attributes attrs) {
+
     }
 
     @Override

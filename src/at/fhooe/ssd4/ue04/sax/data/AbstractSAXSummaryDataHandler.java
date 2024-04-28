@@ -18,9 +18,13 @@ public abstract class AbstractSAXSummaryDataHandler<T> implements AbstractSAXSum
     public T getValue(SAXSummaryDataHandlerDataEnum key) {
 
         if (!dataStore.containsKey(key)) {
-            throw new SAXSummaryDataHandlerValueNotFoundException(STR."key \{key} not found, \{dataStore.size()} values contained");
+            throw new SAXSummaryDataHandlerValueNotFoundException(STR."key \{key} not found, \{dataStore.size()} other values contained");
         }
         return dataStore.get(key);
+    }
+
+    public void removeKey(SAXSummaryDataHandlerDataEnum key) {
+        dataStore.remove(key);
     }
 
     public boolean hasValue(SAXSummaryDataHandlerDataEnum key) {
