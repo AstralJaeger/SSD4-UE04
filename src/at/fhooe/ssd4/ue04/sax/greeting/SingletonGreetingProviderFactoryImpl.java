@@ -1,4 +1,4 @@
-package tests.sax.greeting;
+package at.fhooe.ssd4.ue04.sax.greeting;
 
 public class SingletonGreetingProviderFactoryImpl implements AbstractSingletonGreetingProviderFactory {
 

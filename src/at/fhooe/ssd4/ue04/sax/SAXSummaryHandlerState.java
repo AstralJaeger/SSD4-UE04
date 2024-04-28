@@ -1,4 +1,4 @@
-package tests.sax;
+package at.fhooe.ssd4.ue04.sax;
 
 public enum SAXSummaryHandlerState {
     NONE(""),

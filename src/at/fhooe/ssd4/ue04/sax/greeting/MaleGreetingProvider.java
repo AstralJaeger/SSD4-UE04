@@ -1,14 +1,14 @@
-package tests.sax.greeting;
+package at.fhooe.ssd4.ue04.sax.greeting;
 
-public class FemaleGreetingProvider extends AbstractGreetingProvider {
+public class MaleGreetingProvider extends AbstractGreetingProvider {
 
-    public FemaleGreetingProvider(String name, String prefix, String suffix) {
+    public MaleGreetingProvider(String name, String prefix, String suffix) {
         super(name, prefix, suffix);
     }
 
     @Override
     public String provideGreeting() {
-        StringBuilder greeting = new StringBuilder("Sehr geehrte Frau ");
+        StringBuilder greeting = new StringBuilder("Sehr geehrter Herr ");
         if (super.prefix != null) {
             greeting.append(super.prefix).append(" ");
         }
